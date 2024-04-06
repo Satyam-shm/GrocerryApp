@@ -1,18 +1,9 @@
 import React from 'react';
-import {Text, View} from 'react-native';
+import HomeNavigator from './src/navigator/HomeNavigator';
+import Navigation from './src/navigator/Navigation';
 
 const App: React.FunctionComponent = () => {
-  return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: 'white',
-      }}>
-      <Text style={{fontSize: 20, color: 'black'}}>Hello Grocerry app</Text>
-    </View>
-  );
+  return <Navigation />;
 };
 
 export default App;
