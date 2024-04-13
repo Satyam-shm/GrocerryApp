@@ -11,11 +11,13 @@ import {
 import {Header} from '../common';
 import {useSelector} from 'react-redux';
 import {VectorIcon, hp, wp, StyleFont} from '../utils';
+import {useNavigation} from '@react-navigation/native';
 
 const Search = () => {
   const {productData} = useSelector((store: any) => store.productData);
   const [filterData, setFilterData] = useState([]);
   const [value, setValue] = useState<string>('');
+  const navigation = useNavigation();
 
   const handleSearch = (txt: string) => {
     const data = productData.filter((item: any) =>
@@ -60,7 +62,11 @@ const Search = () => {
           data={filterData.length > 0 ? filterData : productData}
           keyExtractor={item => item.id}
           renderItem={({item}) => (
-            <TouchableOpacity style={styles.itemContainer}>
+            <TouchableOpacity
+              style={styles.itemContainer}
+              onPress={() =>
+                navigation.navigate('ProductDetail', {item: item})
+              }>
               <Image
                 source={{uri: item?.image}}
                 style={styles.image}

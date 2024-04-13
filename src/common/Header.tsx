@@ -1,6 +1,7 @@
 import {View, Text, StyleSheet} from 'react-native';
 import React from 'react';
-import {VectorIcon, hp, StyleFont} from '../utils';
+import {VectorIcon, hp, StyleFont, wp, pixel} from '../utils';
+import {useSelector} from 'react-redux';
 
 interface HeaderProps {
   title: string;
@@ -23,6 +24,7 @@ const Header = ({
   rightIconStyle,
   containerStyle,
 }: HeaderProps) => {
+  const {wishlistData} = useSelector((store: any) => store.wishlistData);
   return (
     <View style={[styles.container, containerStyle]}>
       {leftIcon ? (
@@ -37,12 +39,19 @@ const Header = ({
       )}
       <Text style={styles.titleText}>{title}</Text>
       {rightIcon ? (
-        <VectorIcon
-          name={rightIcon}
-          onPress={rightIconPress}
-          style={rightIconStyle}
-          isMaterialCommunityIcon
-        />
+        <View style={{position: 'relative'}}>
+          <VectorIcon
+            name={rightIcon}
+            onPress={rightIconPress}
+            style={rightIconStyle}
+            isMaterialCommunityIcon
+          />
+          <View style={styles.dot}>
+            <Text style={{...StyleFont('600', 10)}}>
+              {wishlistData?.length}
+            </Text>
+          </View>
+        </View>
       ) : (
         <View />
       )}
@@ -64,6 +73,17 @@ const styles = StyleSheet.create({
     width: '80%',
 
     textAlign: 'center',
+  },
+  dot: {
+    height: hp(15),
+    width: wp(15),
+    backgroundColor: 'white',
+    borderRadius: pixel(50),
+    position: 'absolute',
+    right: wp(-5),
+    top: hp(-5),
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
 export default Header;

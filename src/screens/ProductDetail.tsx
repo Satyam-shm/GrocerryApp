@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -10,11 +10,29 @@ import {
 import {CustomButton, Header} from '../common';
 import {hp, pixel, StyleFont, VectorIcon, wp} from '../utils';
 import {useNavigation} from '@react-navigation/native';
+import {addWishlistItem} from '../redux/WishlistSlice';
+import {useDispatch, useSelector} from 'react-redux';
 
 const ProductDetail = ({route}: any) => {
   const {item: data} = route?.params ?? {};
+  const {wishlistData} = useSelector((store: any) => store.wishlistData);
+  const [itemExist, setItemExist] = useState<boolean>(false);
+  const dispatch = useDispatch();
   const [isLiked, setIsLiked] = useState<boolean>(false);
   const navigation = useNavigation();
+
+  function checkItemExist() {
+    const value = wishlistData.filter((value: any) => {
+      if (value?.id == data?.id) {
+        return true;
+      }
+    });
+    if (value.length > 0) setItemExist(true);
+  }
+
+  useEffect(() => {
+    checkItemExist();
+  }, [dispatch]);
 
   return (
     <View style={styles.container}>
@@ -56,7 +74,14 @@ const ProductDetail = ({route}: any) => {
             <Text style={styles.priceLabel}>Price: </Text>
             <Text style={styles.priceValue}>${data?.price}</Text>
           </View>
-          <CustomButton title={'Add to Cart'} />
+          <CustomButton
+            title={'Add to Cart'}
+            onPress={async () => {
+              dispatch(addWishlistItem(data));
+              checkItemExist();
+            }}
+            disabled={itemExist}
+          />
         </View>
       </ScrollView>
     </View>
