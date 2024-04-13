@@ -1,17 +1,15 @@
 import {View, Text, StyleSheet} from 'react-native';
-import React, {useEffect} from 'react';
+import React from 'react';
 import {VectorIcon, hp, StyleFont} from '../utils';
-import {get} from '../api';
-import {fetchProduct} from '../api/ScreenApi/fetchProduct';
 
 interface HeaderProps {
   title: string;
   leftIcon?: string;
   leftIconStyle?: object;
-  RightIcon?: string;
-  RightIconStyle?: object;
+  rightIcon?: string;
+  rightIconStyle?: object;
   containerStyle?: object;
-  RightIconPress?: any;
+  rightIconPress?: any;
   leftIconPress?: any;
 }
 
@@ -20,9 +18,9 @@ const Header = ({
   leftIcon,
   leftIconPress,
   leftIconStyle,
-  RightIcon,
-  RightIconPress,
-  RightIconStyle,
+  rightIcon,
+  rightIconPress,
+  rightIconStyle,
   containerStyle,
 }: HeaderProps) => {
   return (
@@ -34,16 +32,20 @@ const Header = ({
           style={leftIconStyle}
           isMaterialCommunityIcon
         />
-      ) : null}
+      ) : (
+        <View />
+      )}
       <Text style={styles.titleText}>{title}</Text>
-      {RightIcon ? (
+      {rightIcon ? (
         <VectorIcon
-          name={RightIcon}
-          onPress={RightIconPress}
-          style={RightIconStyle}
+          name={rightIcon}
+          onPress={rightIconPress}
+          style={rightIconStyle}
           isMaterialCommunityIcon
         />
-      ) : null}
+      ) : (
+        <View />
+      )}
     </View>
   );
 };
@@ -59,7 +61,7 @@ const styles = StyleSheet.create({
   },
   titleText: {
     ...StyleFont('400', 20, '#000'),
-    width: '90%',
+    width: '80%',
 
     textAlign: 'center',
   },

@@ -1,9 +1,14 @@
 import React from 'react';
-import HomeNavigator from './src/navigator/HomeNavigator';
 import Navigation from './src/navigator/Navigation';
+import {Provider} from 'react-redux';
+import {store} from './src/redux/store';
 
 const App: React.FunctionComponent = () => {
-  return <Navigation />;
+  return (
+    <Provider store={store}>
+      <Navigation />
+    </Provider>
+  );
 };
 
 export default App;

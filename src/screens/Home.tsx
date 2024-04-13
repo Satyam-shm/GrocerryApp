@@ -2,48 +2,92 @@ import React, {useEffect, useState} from 'react';
 import {Header} from '../common';
 import {hp, pixel, wp, StyleFont} from '../utils';
 import {useNavigation} from '@react-navigation/native';
-import {FlatList, Image, StyleSheet, Text, View} from 'react-native';
+import {
+  ActivityIndicator,
+  FlatList,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import {fetchProduct} from '../api/ScreenApi/fetchProduct';
+import {useDispatch} from 'react-redux';
+import {setData} from '../redux/productDetailSlice';
+
+type Product = {
+  id: string;
+  title: string;
+  image: string;
+  price: number;
+};
 
 const Home = () => {
-  const navigation = useNavigation();
-  const [productList, setProductList] = useState<[]>([]);
+  const navigation = useNavigation<any>();
+  const dispatch = useDispatch();
+  const [loading, setLoading] = useState<boolean>(false);
+  const [productList, setProductList] = useState<Product[]>([]);
+
   useEffect(() => {
     async function getProducts() {
+      setLoading(true);
       try {
         const res = await fetchProduct();
         setProductList(res);
+        dispatch(setData(res));
       } catch (error) {
-        console.log('get produucts error ', error);
+        console.log('Error fetching products:', error);
+      } finally {
+        setLoading(false);
       }
     }
     getProducts();
   }, []);
+
   return (
     <>
       <Header
         title="Home"
         leftIcon="menu"
-        leftIconStyle={{fontSize: pixel(24)}}
+        leftIconStyle={{fontSize: pixel(24), color: 'black'}}
         leftIconPress={() => navigation.openDrawer()}
+        rightIcon="cart"
+        rightIconStyle={styles.headerIcon}
       />
       <View style={styles.bodyContainer}>
-        <FlatList
-          data={productList}
-          keyExtractor={(item: any) => item?.id}
-          renderItem={({item}: any) => {
-            return (
-              <View style={styles.itemContainer}>
-                <Image source={{uri: item?.image}} height={100} width={100} />
+        {loading ? (
+          <View
+            style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+            <ActivityIndicator size={'large'} color={'purple'} />
+          </View>
+        ) : (
+          <FlatList
+            data={productList}
+            keyExtractor={item => item.id}
+            renderItem={({item}) => (
+              <TouchableOpacity
+                style={styles.itemContainer}
+                onPress={() =>
+                  navigation.navigate('ProductDetail', {item: item})
+                }>
+                <Image
+                  source={{uri: item.image}}
+                  style={styles.image}
+                  resizeMode="contain"
+                />
                 <View>
-                  <Text numberOfLines={2}>{item?.title}</Text>
-                  <Text style={{...StyleFont('500', 20)}}>$ {item?.price}</Text>
+                  <Text
+                    style={{...StyleFont('400', 16, '#000')}}
+                    numberOfLines={2}>
+                    {item.title}
+                  </Text>
+                  <Text style={{...StyleFont('500', 20)}}>$ {item.price}</Text>
                 </View>
-              </View>
-            );
-          }}
-          showsVerticalScrollIndicator={false}
-        />
+              </TouchableOpacity>
+            )}
+            showsVerticalScrollIndicator={false}
+          />
+        )}
       </View>
     </>
   );
@@ -59,7 +103,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginVertical: hp(5),
     gap: 10,
-    borderWidth: 1,
+  },
+  image: {
+    width: wp(100),
+    height: hp(110),
+  },
+  headerIcon: {
+    fontSize: pixel(24),
+    color: 'black',
   },
 });
 
